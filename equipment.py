@@ -39,24 +39,32 @@ class Equipment:
     def __init__(self):
         self.equipment = self._get_equipment_data()
 
-    def get_weapon(self, arg: Optional[Weapon] = None) -> None:
+    def get_weapon(self, arg: Optional[Weapon]):
         for weapon in self.equipment.weapons:
             if weapon.name == arg:
                 return weapon
 
-    def get_armor(self, var: Optional[Armor] = None) -> None:
+    def get_armor(self, var: Optional[Armor]):
         for armor in self.equipment.armors:
             if armor.name == var:
                 return armor
 
+
     def get_weapons_names(self) -> list:
-        return [item.name for item in self.equipment.weapons]
+        weapons_list = []
+        for weapon in self.equipment.weapons:
+            weapons_list.append(weapon.name)
+        return weapons_list
 
     def get_armors_names(self) -> list:
-        return [item.name for item in self.equipment.armors]
+        armors_list = []
+        for armor in self.equipment.armors:
+            armors_list.append(armor.name)
+        return armors_list
 
     @staticmethod
     def _get_equipment_data() -> EquipmentData:
+
         equipment_file = open("data/equipment.json", encoding="utf-8")
         data = json.load(equipment_file)
         equipment_schema = marshmallow_dataclass.class_schema(EquipmentData)
@@ -64,3 +72,5 @@ class Equipment:
             return equipment_schema().load(data)
         except marshmallow.exceptions.ValidationError:
             raise ValueError
+        else:
+            raise Exception
