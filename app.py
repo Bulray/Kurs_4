@@ -57,66 +57,62 @@ def pass_turn():
 def end_fight():
     return render_template("index.html", heroes=heroes)
 
-
-@app.route("/choose-hero/", methods=['post'])
-def choose_hero_to_post():
-    name = request.form["name"]
-    name_of_armor = request.form["armor"]
-    name_of_weap = request.form["weapon"]
-    unit_class = request.form["unit_class"]
-    player = PlayerUnit(name=name, unit_class=unit_classes.get(unit_class))
-    player.equip_weapon(Equipment().get_weapon(name_of_weap))
-    player.equip_armor(Equipment().get_armor(name_of_armor))
-    heroes["player"] = player
-    return redirect(url_for("/choose_enemy/"))
-
-
-@app.route("/choose-hero/", methods=['get'])
-def choose_hero_to_get():
-    header = "Выберите героя"
-    equipment = Equipment()
-    weapons = equipment.get_weapons_names()
-    armors = equipment.get_armors_names()
-    classes = unit_classes
-    return render_template(
-        "hero_choosing.html",
-        result={
-            "header": header,
-            "classes": classes,
-            "weapons": weapons,
-            "armors": armors
-        }
-    )
+@app.route("/choose-hero/", methods=['post', 'get'])
+def choose_hero():
+    if request.method == "GET":
+        header = "Выберите героя"
+        equipment = Equipment()
+        weapons = equipment.get_weapons_names()
+        armors = equipment.get_armors_names()
+        classes = unit_classes
+        return render_template(
+            "hero_choosing.html",
+            result={
+                "header": header,
+                "classes": classes,
+                "weapons": weapons,
+                "armors": armors
+            }
+        )
+    if request.method == "POST":
+        name = request.form["name"]
+        armor_name = request.form["armor"]
+        weapon_name = request.form["weapon"]
+        unit_class = request.form["unit_class"]
+        player = PlayerUnit(name=name, unit_class=unit_classes.get(unit_class))
+        player.equip_weapon(Equipment().get_weapon(weapon_name))
+        player.equip_armor(Equipment().get_armor(armor_name))
+        heroes["player"] = player
+        return redirect(url_for("choose_enemy"))
 
 
-@app.route("/choose-enemy/", methods=['post'])
-def choose_enemy_to_post():
-    name = request.form["name"]
-    name_of_armor = request.form["armor"]
-    name_of_weap = request.form["weapon"]
-    unit_class = request.form["unit_class"]
-    enemy = EnemyUnit(name=name, unit_class=unit_classes.get(unit_class))
-    enemy.equip_weapon(Equipment().get_weapon(name_of_weap))
-    enemy.equip_armor(Equipment().get_armor(name_of_armor))
-    heroes["enemy"] = enemy
-    return redirect(url_for("/start_fight/"))
-
-
-@app.route("/choose-enemy/", methods=['get'])
-def choose_enemy_to_get():
-    header = "Выберите врага"
-    equipment = Equipment()
-    weapons = equipment.get_weapons_names()
-    armors = equipment.get_armors_names()
-    classes = unit_classes
-    return render_template("hero_choosing.html",
-        result={
-            "header": header,
-            "classes": classes,
-            "weapons": weapons,
-            "armors": armors
-        }
-    )
+@app.route("/choose-enemy/", methods=['post', 'get'])
+def choose_enemy():
+    if request.method == "GET":
+        header = "Выберите врага"
+        equipment = Equipment()
+        weapons = equipment.get_weapons_names()
+        armors = equipment.get_armors_names()
+        classes = unit_classes
+        return render_template(
+            "hero_choosing.html",
+            result={
+                "header": header,
+                "classes": classes,
+                "weapons": weapons,
+                "armors": armors
+            }
+        )
+    if request.method == "POST":
+        name = request.form["name"]
+        armor_name = request.form["armor"]
+        weapon_name = request.form["weapon"]
+        unit_class = request.form["unit_class"]
+        enemy = EnemyUnit(name=name, unit_class=unit_classes.get(unit_class))
+        enemy.equip_weapon(Equipment().get_weapon(weapon_name))
+        enemy.equip_armor(Equipment().get_armor(armor_name))
+        heroes["enemy"] = enemy
+        return redirect(url_for("start_fight"))
 
 
 if __name__ == "__main__":
